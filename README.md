@@ -1,69 +1,125 @@
-# :package_description
+# Laravel Human IDs
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/:vendor_slug/:package_slug.svg?style=flat-square)](https://packagist.org/packages/:vendor_slug/:package_slug)
-[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/:vendor_slug/:package_slug/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/:vendor_slug/:package_slug/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/:vendor_slug/:package_slug/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/:vendor_slug/:package_slug/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
-[![Total Downloads](https://img.shields.io/packagist/dt/:vendor_slug/:package_slug.svg?style=flat-square)](https://packagist.org/packages/:vendor_slug/:package_slug)
-<!--delete-->
----
-This repo can be used to scaffold a Laravel package. Follow these steps to get started:
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/lemaur/laravel-human-id.svg?style=flat-square)](https://packagist.org/packages/lemaur/laravel-human-id)
+[![Total Downloads](https://img.shields.io/packagist/dt/lemaur/laravel-human-id.svg?style=flat-square)](https://packagist.org/packages/lemaur/laravel-human-id)
+[![License](https://img.shields.io/packagist/l/lemaur/laravel-human-id.svg?style=flat-square&color=yellow)](https://github.com/leMaur/laravel-human-id/blob/main/LICENSE.md)
+[![Tests](https://img.shields.io/github/actions/workflow/status/lemaur/laravel-human-id/run-tests.yml?label=tests&style=flat-square)](https://github.com/leMaur/laravel-human-id/actions/workflows/run-tests.yml)
+[![GitHub Sponsors](https://img.shields.io/github/sponsors/lemaur?style=flat-square&color=ea4aaa)](https://github.com/sponsors/leMaur)
+[![Trees](https://img.shields.io/badge/dynamic/json?color=yellowgreen&style=flat-square&label=Trees&query=%24.total&url=https%3A%2F%2Fpublic.offset.earth%2Fusers%2Flemaur%2Ftrees)](https://ecologi.com/lemaur?r=6012e849de97da001ddfd6c9)
 
-1. Press the "Use this template" button at the top of this repo to create a new repo with the contents of this skeleton.
-2. Run "php ./configure.php" to run a script that will replace all placeholders throughout all the files.
-3. Have fun creating your package.
-4. If you need help creating a package, consider picking up our <a href="https://laravelpackage.training">Laravel Package Training</a> video course.
----
-<!--/delete-->
-This is where your description should go. Limit it to a paragraph or two. Consider adding a small example.
+This package has been inspired by the article "Designing APIs for humans: Object IDs" appeared on [Dev](https://dev.to/stripe/designing-apis-for-humans-object-ids-3o5a) (Aug 30, 2022 / by [Paul Asjes](https://dev.to/paulasjes)).
 
-## Support us
+I really like the approach Stripe uses to define the object ID, so I figured out how to make something similar for Laravel.  
+Basically, the package generate a so-called "human id" by prepending a prefix to a ULID with a separator between them.
 
-[<img src="https://github-ads.s3.eu-central-1.amazonaws.com/:package_name.jpg?t=1" width="419px" />](https://spatie.be/github-ad-click/:package_name)
+An example should be better than a thousand words...
 
-We invest a lot of resources into creating [best in class open source packages](https://spatie.be/open-source). You can support us by [buying one of our paid products](https://spatie.be/open-source/support-us).
+```md
+👇 the structure -----------------
 
-We highly appreciate you sending us a postcard from your hometown, mentioning which of our package(s) you are using. You'll find our address on [our contact page](https://spatie.be/about-us). We publish all received postcards on [our virtual postcard wall](https://spatie.be/open-source/postcards).
+{prefix}{separator}{ulid}
+
+
+👇 the params --------------------
+
+prefix: post
+separator: _
+ulid: 26 alphanumeric characters
+
+
+👇 the result --------------------
+
+post_01h554vp2prg6zfayagh83ccx7
+```
+
+<br>
+
+## Support Me
+
+Hey folks,
+
+Do you like this package? Do you find it useful, and it fits well in your project?
+
+I am glad to help you, and I would be so grateful if you considered supporting my work.
+
+You can even choose 😃:
+* You can [sponsor me 😎](https://github.com/sponsors/leMaur) with a monthly subscription.
+* You can [buy me a coffee ☕ or a pizza 🍕](https://github.com/sponsors/leMaur?frequency=one-time&sponsor=leMaur) just for this package.
+* You can [plant trees 🌴](https://ecologi.com/lemaur?r=6012e849de97da001ddfd6c9). By using this link we will both receive 30 trees for free and the planet (and me) will thank you. 
+* You can "Star ⭐" this repository (it's free 😉).
+
+<br>
 
 ## Installation
 
 You can install the package via composer:
 
 ```bash
-composer require :vendor_slug/:package_slug
+composer require lemaur/laravel-human-id
 ```
 
-You can publish and run the migrations with:
-
-```bash
-php artisan vendor:publish --tag=":package_slug-migrations"
-php artisan migrate
-```
-
-You can publish the config file with:
-
-```bash
-php artisan vendor:publish --tag=":package_slug-config"
-```
-
-This is the contents of the published config file:
-
-```php
-return [
-];
-```
-
-Optionally, you can publish the views using
-
-```bash
-php artisan vendor:publish --tag=":package_slug-views"
-```
+<br>
 
 ## Usage
 
+1. Add the "human ID" field in your migration files.    
+2. Import the `Lemaur\HumanId\Concerns\HasHuids` trait into your eloquent model.
+
+Here's a real-life example of how to implement the trait on a model.
+
 ```php
-$variable = new VendorName\Skeleton();
-echo $variable->echoPhrase('Hello, VendorName!');
+// database\migrations\create_posts_table.php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('posts', static function (Blueprint $table) {
+            $table->id();
+            
+            $table->huid(); // <-- declare "huid" field
+            
+            // other fields...
+        });
+    }
+}
 ```
+
+```php
+// app\Models\Post.php
+
+namespace App\Models;
+
+use \Illuminate\Database\Eloquent\Model;
+use \Lemaur\HumanId\Concerns\HasHuids;
+
+class Post extends Model
+{
+    use HasHuids; // <-- import trait
+    
+    /** @var string */
+    private const HUID_PREFIX = 'post'; // <-- declare prefix (max 4 characters length)
+}
+
+// this will generate a huid like --> post_01h554vp2prg6zfayagh83ccx7
+```
+
+<br>
+
+## Configuration
+
+You can use a different name for the field (currently is "huid") and the separator character (currently is "_").  
+To do that, you should publish the configuration file and change them from there.
+
+```bash
+php artisan vendor:publish --tag=human-id-config
+```
+
+<br>
 
 ## Testing
 
@@ -85,7 +141,7 @@ Please review [our security policy](../../security/policy) on how to report secu
 
 ## Credits
 
-- [:author_name](https://github.com/:author_username)
+- [leMaur](https://github.com/lemaur)
 - [All Contributors](../../contributors)
 
 ## License
