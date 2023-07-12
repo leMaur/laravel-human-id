@@ -7,9 +7,10 @@
 [![GitHub Sponsors](https://img.shields.io/github/sponsors/lemaur?style=flat-square&color=ea4aaa)](https://github.com/sponsors/leMaur)
 [![Trees](https://img.shields.io/badge/dynamic/json?color=yellowgreen&style=flat-square&label=Trees&query=%24.total&url=https%3A%2F%2Fpublic.offset.earth%2Fusers%2Flemaur%2Ftrees)](https://ecologi.com/lemaur?r=6012e849de97da001ddfd6c9)
 
-This package has been inspired by the article "Designing APIs for humans: Object IDs" appeared on [Dev](https://dev.to/stripe/designing-apis-for-humans-object-ids-3o5a) (Aug 30, 2022 / by [Paul Asjes](https://dev.to/paulasjes)).
+This package has been inspired by the article "Designing APIs for humans: Object IDs"  
+appeared on [Dev](https://dev.to/stripe/designing-apis-for-humans-object-ids-3o5a) (Aug 30, 2022 / by [Paul Asjes](https://dev.to/paulasjes)).
 
-I really like the approach Stripe uses to define the object ID, so I figured out how to make something similar for Laravel.  
+I really like the approach Stripe uses to define the object ID, so I figured out how to make something similar for Laravel.      
 Basically, the package generate a so-called "human id" by prepending a prefix to a ULID with a separator between them.
 
 An example should be better than a thousand words...
@@ -102,7 +103,7 @@ class Post extends Model
     use HasHuids; // <-- import trait
     
     /** @var string */
-    private const HUID_PREFIX = 'post'; // <-- declare prefix (max 4 characters length)
+    private const HUID_PREFIX = 'post'; // <-- declare prefix (max 4 characters)
 }
 
 // this will generate a huid like --> post_01h554vp2prg6zfayagh83ccx7
@@ -112,8 +113,8 @@ class Post extends Model
 
 ## Configuration
 
-You can use a different name for the field (currently is "huid") and the separator character (currently is "_").  
-To do that, you should publish the configuration file and change them from there.
+You can use a different name for the field (currently is `huid`) and a different separator (currently is `_`).  
+To do that, you should publish the configuration file (`config/human-id.php`) and change them from there.
 
 ```bash
 php artisan vendor:publish --tag=human-id-config
