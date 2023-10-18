@@ -13,8 +13,6 @@ trait HasHuids
 {
     /**
      * Initialize the trait.
-     *
-     * @return void
      */
     public function initializeHasHuids(): void
     {
@@ -23,8 +21,6 @@ trait HasHuids
 
     /**
      * Get the columns that should receive a unique identifier.
-     *
-     * @return array
      */
     public function uniqueIds(): array
     {
@@ -34,7 +30,6 @@ trait HasHuids
     /**
      * Generate a new ULID for the model.
      *
-     * @return string
      * @throws RuntimeException
      */
     public function newUniqueId(): string
@@ -68,7 +63,6 @@ trait HasHuids
      * @param  Model|Relation  $query
      * @param  mixed  $value
      * @param  string|null  $field
-     * @return Relation|Builder
      *
      * @throws ModelNotFoundException
      */
@@ -91,8 +85,6 @@ trait HasHuids
 
     /**
      * Get the auto-incrementing key type.
-     *
-     * @return string
      */
     public function getKeyType(): string
     {
@@ -105,8 +97,6 @@ trait HasHuids
 
     /**
      * Get the value indicating whether the IDs are incrementing.
-     *
-     * @return bool
      */
     public function getIncrementing(): bool
     {
