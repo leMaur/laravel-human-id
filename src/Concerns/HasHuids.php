@@ -2,6 +2,7 @@
 
 namespace Lemaur\HumanId\Concerns;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -67,11 +68,11 @@ trait HasHuids
      * @param  Model|Relation  $query
      * @param  mixed  $value
      * @param  string|null  $field
-     * @return Relation
+     * @return Relation|Builder
      *
      * @throws ModelNotFoundException
      */
-    public function resolveRouteBindingQuery($query, $value, $field = null): Relation
+    public function resolveRouteBindingQuery($query, $value, $field = null): Relation|Builder
     {
         if ($field && ! Str::isHuid($value) && in_array($field, $this->uniqueIds(), true)) {
             throw (new ModelNotFoundException)->setModel(get_class($this), $value);
@@ -79,6 +80,10 @@ trait HasHuids
 
         if (! $field && ! Str::isHuid($value) && in_array($this->getRouteKeyName(), $this->uniqueIds(), true)) {
             throw (new ModelNotFoundException)->setModel(get_class($this), $value);
+        }
+
+        if ($field === null && Str::isHuid($value)) {
+            $field = (string) config('human-id.field', 'huid');
         }
 
         return parent::resolveRouteBindingQuery($query, $value, $field);
